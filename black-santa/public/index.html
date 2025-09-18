@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Black Santa</title>
+    <meta name="description" content="خدمة مونتاج احترافية تقدمها Black Santa لمساعدتك في تحويل فكرتك إلى فيديو جذاب واحترافي.">
+    <meta name="keywords" content="مونتاج, محتوى, فيديو, تصميم, Black Santa, تعديل فيديو">
+    <meta name="author" content="Black Santa">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" href="FULL COLOR LOGO[1].png">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="head">
+        <div class="contenar">
+            <a href="#"> <img src="FULL COLOR LOGO[1].png" ></a>
+            
+            <div class="nav">
+                <a href="#">Home</a><a href="#">Portfolio</a><a href="#">About Us</a>
+            </div>
+        </div>
+    </div>
+
+    <a href="#" class="tyt"><i class="fa-solid fa-arrow-up"></i></a>
+    
+    <div class="hero">
+        <div class="cont">
+            <img src="pexels-fonok-403495 (1).jpg">
+            <div class="text1">
+                <h1>Black Santa</h1>
+                <p id="typed"></p>
+                <a href="#" class="btn">View Work</a>
+            </div>
+        </div>
+    </div>
+    <!-- الموجة -->
+    <div class="wave">
+    <svg viewBox="0 0 500 150" preserveAspectRatio="none" style="height: 100px; width: 100%;">
+        <path d="M0.00,49.98 C150.00,150.00 349.99,-50.00 500.00,49.98 L500.00,150.00 L0.00,150.00 Z" 
+            style="stroke: none; fill: url(#grad);"></path>
+        <defs>
+        <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style="stop-color:#00DAFF;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#005C9E;stop-opacity:1" />
+        </linearGradient>
+        </defs>
+    </svg>
+    </div>
+
+
+    <div class="portfolio">
+        <div class="con">
+            <h1>من نحن</h1>
+            <ul>
+                <li>نحوّل أفكارك لمحتوى جذاب يُشاهد ويُشارك.</li>
+                <li>مونتاج احترافي + إحساس + قصة.</li>
+                <li>نتعامل مع أفراد وبراندات باحترافية.</li>
+            </ul> 
+        <br>
+            
+        </div>
+
+    </div>
+    <div id="reels" style="display:flex; flex-wrap:wrap; justify-content:center; gap:20px; margin-bottom: 50px;"></div>
+
+
+
+
+
+    <section class="stats">
+        <h2>لقد تعاملنا مع <span id="clients-count">0</span>+ عميل</h2>
+    </section>
+
+
+
+    <div class="booking">
+        <form id="bookingForm">
+            <label for="nam">Name</label>
+            <input id="nam" type="text" name="name"  required>
+            <label >Email</label>
+            <input type="email" name="email" required>
+            <label for="nam">your number</label>
+            <input id="tel" type="tel" name="phone"  required dir="rtl">            
+        <button type="submit">إرسال الحجز</button>
+        </form>
+
+        
+    </div>
+    <footer class="footer">
+        <div class="social-icons">
+            <a href="#" class="whatsapp" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+            <a href="#" class="facebook" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" class="instagram" title="Instagram"><i class="fab fa-instagram"></i></a>
+            <a href="#" class="twitter" title="Twitter"><i class="fab fa-twitter"></i></a>
+            <a href="#" class="linkedin" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+            <a href="#" class="youtube" title="YouTube"><i class="fab fa-youtube"></i></a>
+        </div>
+        <p>2025 Black Santa All rights reserved ©</p>
+    </footer>
+    <a href="https://wa.me/20123456789" class="whatsapp-float" target="_blank">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+     <script>
+    // كل مرة الصفحة دي تتفتح، العدد يزيد
+    fetch('https://api.countapi.xyz/hit/blacksanta.com/visitors')
+      .then(res => res.json())
+      .then(data => {
+        console.log("العدد الحالي:", data.value);
+      });
+  </script>
+
+    
+
+
+    <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script>
+function animateCounter(id, target, duration) {
+  let element = document.getElementById(id);
+  let start = 0;
+  let startTime = null;
+
+  function updateCounter(timestamp) {
+    if (!startTime) startTime = timestamp;
+    let progress = timestamp - startTime;
+    let value = Math.min(Math.floor((progress / duration) * target), target);
+    element.textContent = value;
+    if (value < target) {
+      requestAnimationFrame(updateCounter); // FPS ثابت
+    }
+  }
+
+  requestAnimationFrame(updateCounter);
+}
+
+// تريجر اللاب فقط
+const triggerLaptop = 1200; // البكسل اللي عنده يبدأ العداد
+
+function checkScroll() {
+  const scrollY = window.scrollY;
+  const isLaptop = window.innerWidth > 768; // شرط اللاب فقط
+
+  if (isLaptop && scrollY >= triggerLaptop) {
+    animateCounter("clients-count", 500, 1500); // يعد لحد 500 في 2 ثانية
+    window.removeEventListener("scroll", checkScroll); // يشتغل مرة واحدة
+  }
+}
+
+window.addEventListener("scroll", checkScroll);
+</script>
+
+
+    
+
+
+    <script src="main.js"></script>
+</body>
+</html>

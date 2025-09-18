@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>إضافة ريل جديد</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      background: #0f0f0f;
+      color: #e0f7fa;
+      font-family: sans-serif;
+      text-align: center;
+      padding: 50px;
+    }
+    h1, h2 {
+      color: #00DAFF;
+    }
+    input, button {
+      padding: 10px;
+      font-size: 18px;
+      margin: 10px;
+      border-radius: 8px;
+      border: none;
+      transition: 0.3s;
+    }
+    input {
+      width: 300px;
+      background-color: #121212;
+      color: #e0f7fa;
+      border: 1px solid #00DAFF;
+    }
+    input:focus {
+      border-color: #6A1B9A;
+      outline: none;
+      box-shadow: 0 0 8px #6A1B9A;
+    }
+    button {
+      background: linear-gradient(90deg, #00DAFF, #005C9E);
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background: linear-gradient(90deg, #005C9E, #6A1B9A);
+      transform: scale(1.05);
+    }
+    #message {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+    .reel-box {
+      background: #1b1b1b;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0,218,255,0.3);
+      transition: 0.5s;
+    }
+    .reel-box:hover {
+      scale: 1.09;
+    }
+    .reel-box button {
+      background: linear-gradient(90deg, #00DAFF, #005C9E);
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .reel-box button:hover {
+      background: linear-gradient(90deg, #005C9E, #6A1B9A);
+    }
+  </style>
+</head>
+<body>
+
+  <script>
+    if (!sessionStorage.getItem("isLoggedIn")) {
+      const password = prompt("أدخل كلمة المرور للدخول:");
+      if (password === "black123") {
+        sessionStorage.setItem("isLoggedIn", "true");
+      } else {
+        alert("كلمة المرور خاطئة! سيتم تحويلك للصفحة العامة.");
+        window.location.href = "/";
+      }
+    }
+  </script>
+
+  <h1>إضافة ريل جديد</h1>
+  <form id="addForm">
+    <input type="text" name="link" placeholder="رابط الفيديو (YouTube, Instagram, MP4...)" required>
+    <br>
+    <button type="submit">➕ إضافة الريل</button>
+  </form>
+
+  <p id="message"></p>
+
+  <h2>الفيديوهات المضافة</h2>
+  <div id="reels" style="display:flex; flex-wrap:wrap; justify-content:center; gap: 40px;"></div>
+
+  <script>
+    const form = document.getElementById('addForm');
+    const message = document.getElementById('message');
+    const reelsContainer = document.getElementById('reels');
+    const API_URL = '/api';
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const link = form.link.value.trim();
+      if (!link) return;
+
+      fetch(`${API_URL}/add`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ link })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          showMessage("✅ تم إضافة الريل بنجاح!", "green");
+          form.reset();
+          loadReels();
+        } else {
+          showMessage("❌ فشل في الإضافة!", "red");
+        }
+      })
+      .catch(() => {
+        showMessage("❌ حدث خطأ في الاتصال بالسيرفر!", "red");
+      });
+    });
+
+    function renderVideo(link) {
+      if (link.includes('youtube.com') || link.includes('youtu.be')) {
+        const videoId = link.includes('v=') ? link.split('v=')[1].split('&')[0] : link.split('/').pop();
+        return `<iframe width="300" height="400" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>`;
+      } else if (link.endsWith('.mp4')) {
+        return `<video width="300" height="400" controls><source src="${link}" type="video/mp4"></video>`;
+      } else {
+        return `<a href="${link}" target="_blank" style="color:#00DAFF; font-size:18px;">🎬 مشاهدة الفيديو</a>`;
+      }
+    }
+
+      function loadReels() {
+    fetch(`${API_URL}/list`)
+      .then(res => res.json())
+      .then(data => {
+        reelsContainer.innerHTML = '';
+        data.forEach(item => {
+          const div = document.createElement('div');
+          div.classList.add('reel-box');
+          div.innerHTML = `
+            ${renderVideo(item.link)}
+            <br>
+            <button onclick="deleteReel('${item.link}')" style="margin-top:10px;">🗑 حذف</button>
+          `;
+          reelsContainer.appendChild(div);
+        });
+      })
+      .catch(() => {
+        showMessage("⚠️ تعذر تحميل الريلز من السيرفر", "orange");
+      });
+  }
+
+  function deleteReel(link) {
+    fetch(`${API_URL}/delete`, {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ link })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        alert('❌ تم حذف الريل!');
+        loadReels();
+      } else {
+        showMessage("❌ لم يتم العثور على الريل", "red");
+      }
+    })
+    .catch(() => {
+      showMessage("⚠️ تعذر حذف الريل", "orange");
+    });
+  }
+
+  function showMessage(text, color) {
+    message.innerText = text;
+    message.style.color = color;
+  }
+
+  window.onload = loadReels;
+  </script>
+</body>
+</html>
