@@ -100,30 +100,23 @@
     const form = document.getElementById('addForm');
     const message = document.getElementById('message');
     const reelsContainer = document.getElementById('reels');
-    const API_URL = '/api';
+    const SHEET_URL = 'https://script.google.com/macros/s/AKfycbx9Ehojyx1u8FnLzs5oJIVCKBPf6lMAAxwct3sHpu4yDMngosyoR25VKYE8tNmRkPbYBw/exec'; // ← حط رابط السكربت هنا
 
     form.addEventListener('submit', function(e) {
       e.preventDefault();
       const link = form.link.value.trim();
       if (!link) return;
 
-      fetch(`${API_URL}/add`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ link })
+      fetch(`${SHEET_URL}?link=${encodeURIComponent(link)}`, {
+        method: 'POST'
       })
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) {
-          showMessage("✅ تم إضافة الريل بنجاح!", "green");
-          form.reset();
-          loadReels();
-        } else {
-          showMessage("❌ فشل في الإضافة!", "red");
-        }
+      .then(() => {
+        showMessage("✅ تم إضافة الريل بنجاح!", "green");
+        form.reset();
+        loadReels();
       })
       .catch(() => {
-        showMessage("❌ حدث خطأ في الاتصال بالسيرفر!", "red");
+        showMessage("❌ حدث خطأ في الاتصال!", "red");
       });
     });
 
@@ -138,53 +131,29 @@
       }
     }
 
-      function loadReels() {
-    fetch(`${API_URL}/list`)
-      .then(res => res.json())
-      .then(data => {
-        reelsContainer.innerHTML = '';
-        data.forEach(item => {
-          const div = document.createElement('div');
-          div.classList.add('reel-box');
-          div.innerHTML = `
-            ${renderVideo(item.link)}
-            <br>
-            <button onclick="deleteReel('${item.link}')" style="margin-top:10px;">🗑 حذف</button>
-          `;
-          reelsContainer.appendChild(div);
+    function loadReels() {
+      fetch(SHEET_URL)
+        .then(res => res.json())
+        .then(data => {
+          reelsContainer.innerHTML = '';
+          data.forEach(item => {
+            const div = document.createElement('div');
+            div.classList.add('reel-box');
+            div.innerHTML = renderVideo(item.link);
+            reelsContainer.appendChild(div);
+          });
+        })
+        .catch(() => {
+          showMessage("⚠️ تعذر تحميل الريلز", "orange");
         });
-      })
-      .catch(() => {
-        showMessage("⚠️ تعذر تحميل الريلز من السيرفر", "orange");
-      });
-  }
+    }
 
-  function deleteReel(link) {
-    fetch(`${API_URL}/delete`, {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ link })
-    })
-    .then(res => res.json())
-    .then(data => {
-      if (data.success) {
-        alert('❌ تم حذف الريل!');
-        loadReels();
-      } else {
-        showMessage("❌ لم يتم العثور على الريل", "red");
-      }
-    })
-    .catch(() => {
-      showMessage("⚠️ تعذر حذف الريل", "orange");
-    });
-  }
+    function showMessage(text, color) {
+      message.innerText = text;
+      message.style.color = color;
+    }
 
-  function showMessage(text, color) {
-    message.innerText = text;
-    message.style.color = color;
-  }
-
-  window.onload = loadReels;
+    window.onload = loadReels;
   </script>
 </body>
 </html>
