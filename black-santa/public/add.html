@@ -89,7 +89,9 @@
     const form = document.getElementById('addForm');
     const message = document.getElementById('message');
     const reelsContainer = document.getElementById('reels');
-    const SHEET_URL = 'https://script.google.com/macros/s/AKfycbxtMNumpW7iGNs3DzdzT3wY_jARv-OmCBGPJJYy0eEjTNuXKMHdUmKdnyzsOwaNUyF3VQ/exec';
+
+    // ✅ رابط Google Apps Script بعد النشر كـ Web App
+    const SHEET_URL = 'https://script.google.com/macros/s/AKfycbxwdiFCcFC6eQSG4c0cMOZvMu4IP8yOP5WUrRMdYuu76__2tDlhHVymUdhG5t2P0b4F/exec';
 
     form.addEventListener('submit', function(e) {
       e.preventDefault();
@@ -97,13 +99,16 @@
       if (!link) return;
 
       fetch(`${SHEET_URL}?link=${encodeURIComponent(link)}`, {
-        method: 'POST',
-        mode: 'no-cors'
+        method: 'POST'
+      })
+      .then(() => {
+        showMessage("✅ تم إرسال الريل! انتظر ثواني للظهور", "green");
+        form.reset();
+        setTimeout(loadReels, 3000);
+      })
+      .catch(() => {
+        showMessage("❌ فشل في إرسال الريل!", "red");
       });
-
-      showMessage("✅ تم إرسال الريل! انتظر ثواني للظهور", "green");
-      form.reset();
-      setTimeout(loadReels, 3000);
     });
 
     function renderVideo(link) {
