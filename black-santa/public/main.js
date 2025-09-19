@@ -1,4 +1,4 @@
-// ✅ الكتابة المتحركة
+// ✅ الكتابة المتحركة// ✅ الكتابة المتحركة
 if (document.getElementById('typed')) {
   new Typed('#typed', {
     strings: ["Your Vision . Our Edit . One Viral Outcome"],
@@ -68,33 +68,35 @@ if (bookingForm) {
 function renderVideo(link) {
   if (link.includes('youtube.com') || link.includes('youtu.be')) {
     const videoId = link.includes('v=') ? link.split('v=')[1].split('&')[0] : link.split('/').pop();
-    return `<iframe width="300" height="400" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>`;
+    return <iframe width="300" height="400" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>;
   } else if (link.endsWith('.mp4')) {
-    return `<video width="300" height="400" controls><source src="${link}" type="video/mp4"></video>`;
+    return <video width="300" height="400" controls><source src="${link}" type="video/mp4"></video>;
   } else {
-    return `<a href="${link}" target="_blank" style="color:white; font-size:18px;">🎬 مشاهدة الفيديو</a>`;
+    return <a href="${link}" target="_blank" style="color:white; font-size:18px;">🎬 مشاهدة الفيديو</a>;
   }
 }
 
-// ✅ تحميل الريلز من السيرفر
+// ✅ تحميل الريلز من Google Sheets
 function loadReels() {
   const container = document.getElementById('reels');
   if (!container) return;
 
-  fetch('/api/list')
+  const SHEET_URL = 'https://script.google.com/macros/s/AKfycbw_jwp1-bBlXnOZZDCxnpT5uwvitxJ6HAd_KSm2WPv5QZhwSk-pRUAp8ZIBZ746f1c/exec';
+
+  fetch(SHEET_URL)
     .then(res => res.json())
     .then(data => {
       container.innerHTML = '';
       data.forEach(item => {
         const div = document.createElement('div');
         div.classList.add('reel-box');
-        div.innerHTML = `
-          <div>
-            ${renderVideo(item.link)}
-          </div>
-        `;
+        div.innerHTML = renderVideo(item.link);
         container.appendChild(div);
       });
+    })
+    .catch(err => {
+      container.innerHTML = <p style="color:orange;">⚠ فشل تحميل الريلز</p>;
+      console.error(err);
     });
 }
 
